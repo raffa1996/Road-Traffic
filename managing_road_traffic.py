@@ -1,7 +1,7 @@
 import numpy 
 import cv2
 from PIL import Image, ImageDraw, ImageFont
-POLYGON_MASK = [
+MASK_POLYGON = [
     (0, 0),
     (0, 288),
     (44, 288),
@@ -11,37 +11,38 @@ POLYGON_MASK = [
     (352, 288),
     (352, 0),
 ]
-def count_edge_pixels(opencv_image):
-    count = 0
+def COUNT_THE_EDGE_PIXELS(OPENCV_IMAGE):
+    COUNT = 0
 
-    width, height = opencv_image.shape[:2]
+    width, height = OPENCV_IMAGE.shape[:2]
 
-    for x in range(0, width):
-        for y in range(0, height):
-            if opencv_image[x, y] == 255:
-                count = count + 1
+    for i in range(0, width):
+        for j in range(0, height):
+            if opencv_image[i, j] == 255:
+                COUNT = COUNT + 1
 
-    return count
+    return COUNT
 
-def count_unmasked_pixels(pil_image):
-    pixels = pil_image.load()
+def COUNT_THE_UNMASKED_PIXELS(PIL_img):
+    pixels = PIL_img.load()
 
-    count = 0
+    COUNT = 0
 
-    for x in range(0, pil_image.size[0]):
-        for y in range(0, pil_image.size[1]):
-            if pixels[x, y] != (0, 0, 0):
-                count = count + 1
+    for i in range(0, PIL_img.size[0]):
+        for j in range(0, PIL_img.size[1]):
+            if pixels[i, j] != (0, 0, 0):
+                COUNT = COUNT + 1
 
-    return count
-def calculate_img_pixels(file_path): 
-    image = Image.open(file_path)
-    ImageDraw.Draw(image).polygon(POLYGON_MASK, fill=(0, 0, 0))
-    unmasked_pixels = count_unmasked_pixels(image)
+    return COUNT
+
+def CALCULATE_THE_IMAGE_PIXELS(FILE_path): 
+    image = Image.open(FILE_path)
+    ImageDraw.Draw(image).polygon(MASK_POLYGON, fill=(0, 0, 0))
+    unmasked_pixels = COUNT_THE_UNMASKED_PIXELS(image)
     opencv_image = cv2.cvtColor(numpy.array(image), cv2.COLOR_RGB2BGR)
     edged_image = cv2.Canny(opencv_image, 100, 200)
-    cv2.imwrite('C:/Users/win7/Desktop/Traffic/02251.png', edged_image)
-    edge_pixels = count_edge_pixels(edged_image)
+    cv2.imwrite(FILE_path, edged_image)
+    edge_pixels = COUNT_THE_EDGE_PIXELS(edged_image)
     T = round(float(edge_pixels) / float(unmasked_pixels), 6) 
     pix = str(T)
     img = Image.open(file_path)
@@ -51,7 +52,7 @@ def calculate_img_pixels(file_path):
     img.show()
     
     
-calculate_img_pixels('C:/Users/win7/Desktop/Traffic/scene02251.png')
+calculate_img_pixels(FILE_path)
 
 
 
